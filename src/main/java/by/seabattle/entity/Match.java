@@ -1,5 +1,6 @@
 package by.seabattle.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import lombok.AllArgsConstructor;
@@ -15,7 +16,7 @@ import lombok.Setter;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class Match {
+public class Match implements Serializable{
 	@Builder.Default
 	private Field[] fields = new Field[2];
 	@Builder.Default
