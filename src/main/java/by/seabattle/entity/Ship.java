@@ -19,5 +19,5 @@ public class Ship implements Serializable{
 	private int countOfCells;
 	private boolean[] cellsState;
 	private boolean isVertical;
-	private int[][] position;
+	private int[] position;
 }

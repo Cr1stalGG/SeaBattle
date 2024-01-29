@@ -19,5 +19,5 @@ public class Field implements Serializable{
 	@Builder.Default
 	private int[][] field = new int[16][16];
 	@Builder.Default
-	private Ship[] ships = new Ship[11];
+	private Ship[] ships = new Ship[21];
 }
