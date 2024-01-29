@@ -1,5 +1,6 @@
 package by.seabattle.service;
 
+import java.lang.management.GarbageCollectorMXBean;
 import java.util.Iterator;
 
 import by.seabattle.entity.Field;
@@ -57,87 +58,98 @@ public class FieldService {
 		
 		int counter = 0;
 		
-		Ship ship;
-		
 		for(int i = 0; i < 6; ++i) 
 			for(int ii = 0; ii < 6-i; ++ii) {
-				ship = new Ship();
+				field.getShips()[counter] = Ship.builder()
+						.countOfCells(i+1)
+						.cellsState(new boolean[i+1])
+						.position(Randomizer.getRandomShipPos())
+						.isVertical(Randomizer.getRandomBoolean())
+						.build();
 				
-				ship.setCountOfCells(i+1);
-				ship.setCellsState(new boolean[i+1]);
+				counter++;
+			}		
+		
+		for(Ship ship : field.getShips()) {	
+			while(!isCorrectPos(ship, field.getField())) {
 				ship.setPosition(Randomizer.getRandomShipPos());
 				ship.setVertical(Randomizer.getRandomBoolean());
-								
-				field.getShips()[counter] = ship;
-				counter++;
-			}
-		
-		int c = 0;
-		for(Ship ship2 : field.getShips()) {	
-			while(!isCorrectPos(ship2, field.getField())) {
-				ship2.setPosition(Randomizer.getRandomShipPos());
-				ship2.setVertical(Randomizer.getRandomBoolean());
 			}
 				
-			for(int i = 0; i < ship2.getCountOfCells(); ++i)
-				if(ship2.getPosition()[1] + i <= 15 && ship2.getPosition()[0] + i <= 15)
-					if(ship2.isVertical()) {
-						field.getField()[ship2.getPosition()[0] + i][ship2.getPosition()[1]] = 2;
-						
-						if(i == 0 && ship2.getPosition()[0] != 0) {
-							field.getField()[ship2.getPosition()[0] + i - 1][ship2.getPosition()[1]] = 1;
-							
-							if(ship2.getPosition()[1] + 1 <= 15)
-								field.getField()[ship2.getPosition()[0] + i - 1][ship2.getPosition()[1] + 1] = 1;
-							
-							if(ship2.getPosition()[1] - 1 >= 0)
-								field.getField()[ship2.getPosition()[0] + i - 1][ship2.getPosition()[1] - 1] = 1;
-						}
-						
-						if(ship2.getPosition()[1] + 1 <= 15)
-							field.getField()[ship2.getPosition()[0] + i][ship2.getPosition()[1] + 1] = 1;
-						
-						if(ship2.getPosition()[1] - 1 >= 0)
-							field.getField()[ship2.getPosition()[0] + i][ship2.getPosition()[1] - 1] = 1;
-						
-						if(i == ship2.getCountOfCells() - 1 && ship2.getPosition()[0] + ship2.getCountOfCells()-1 <= 15) {
-							field.getField()[ship2.getPosition()[0] + i + 1][ship2.getPosition()[1]] = 1;
-							
-							if(ship2.getPosition()[1] + 1 <= 15)
-								field.getField()[ship2.getPosition()[0] + i + 1][ship2.getPosition()[1] + 1] = 1;
-							
-							if(ship2.getPosition()[1] - 1 >= 0)
-								field.getField()[ship2.getPosition()[0] + i + 1][ship2.getPosition()[1] - 1] = 1;
-						}
-					}
-					else {
-						field.getField()[ship2.getPosition()[0]][ship2.getPosition()[1] + i] = 2;	
-						
-						if(i == 0 && ship2.getPosition()[1] != 0 ) {
-							field.getField()[ship2.getPosition()[0]][ship2.getPosition()[1] + i - 1] = 1;
-							
-							if(ship2.getPosition()[0] + 1 <= 15)
-								field.getField()[ship2.getPosition()[0] + 1][ship2.getPosition()[1] + i - 1] = 1;
-								
-							if(ship2.getPosition()[0] - 1 >= 0)
-								field.getField()[ship2.getPosition()[0] - 1][ship2.getPosition()[1] + i - 1] = 1;
-						}
-						if(ship2.getPosition()[0] + 1 <= 15)
-							field.getField()[ship2.getPosition()[0] + 1][ship2.getPosition()[1] + i] = 1;
-						
-						if(ship2.getPosition()[0] - 1 >= 0)
-							field.getField()[ship2.getPosition()[0] - 1][ship2.getPosition()[1] + i] = 1;
-						
-						if(i == ship2.getCountOfCells() - 1 && ship2.getPosition()[1] + i <= 15) {
-							field.getField()[ship2.getPosition()[0]][ship2.getPosition()[1] + i + 1] = 1;
-							
-							if(ship2.getPosition()[0] + 1 <= 15)
-								field.getField()[ship2.getPosition()[0] + 1][ship2.getPosition()[1] + i + 1] = 1;
-							
-							if(ship2.getPosition()[0] - 1 >= 0)
-								field.getField()[ship2.getPosition()[0] - 1][ship2.getPosition()[1] + i + 1] = 1;
-						}
-					}
+			if(ship.isVertical()) 
+				field.setField(verticalArrange(field.getField(), ship));
+			
+			else 
+				field.setField(horizontalArrange(field.getField(), ship));
+					
+		}
+		
+		return field;
+	}
+	
+	private static int[][] verticalArrange(int[][] field, Ship ship) {
+		for(int i = 0; i < ship.getCountOfCells(); ++i) {
+			field[ship.getPosition()[0] + i][ship.getPosition()[1]] = 2;
+			
+			if(i == 0 && ship.getPosition()[0] != 0) {
+				field[ship.getPosition()[0] + i - 1][ship.getPosition()[1]] = 1;
+				
+				if(ship.getPosition()[1] + 1 <= 15)
+					field[ship.getPosition()[0] + i - 1][ship.getPosition()[1] + 1] = 1;
+				
+				if(ship.getPosition()[1] - 1 >= 0)
+					field[ship.getPosition()[0] + i - 1][ship.getPosition()[1] - 1] = 1;
+			}
+			
+			if(ship.getPosition()[1] + 1 <= 15)
+				field[ship.getPosition()[0] + i][ship.getPosition()[1] + 1] = 1;
+			
+			if(ship.getPosition()[1] - 1 >= 0)
+				field[ship.getPosition()[0] + i][ship.getPosition()[1] - 1] = 1;
+			
+			if(i == ship.getCountOfCells() - 1 && ship.getPosition()[0] + ship.getCountOfCells()-1 <= 15) {
+				field[ship.getPosition()[0] + i + 1][ship.getPosition()[1]] = 1;
+				
+				if(ship.getPosition()[1] + 1 <= 15)
+					field[ship.getPosition()[0] + i + 1][ship.getPosition()[1] + 1] = 1;
+				
+				if(ship.getPosition()[1] - 1 >= 0)
+					field[ship.getPosition()[0] + i + 1][ship.getPosition()[1] - 1] = 1;
+			}
+		}
+		return field;
+	}
+	
+	private static int[][] horizontalArrange(int[][] field, Ship ship) {
+		for(int i = 0; i < ship.getCountOfCells(); ++i) {
+			field[ship.getPosition()[0]][ship.getPosition()[1] + i] = 2;	
+			
+			if(i == 0 && ship.getPosition()[1] != 0 ) {
+				field[ship.getPosition()[0]][ship.getPosition()[1] + i - 1] = 1;
+				
+				if(ship.getPosition()[0] + 1 <= 15)
+					field[ship.getPosition()[0] + 1][ship.getPosition()[1] + i - 1] = 1;
+					
+				if(ship.getPosition()[0] - 1 >= 0)
+					field[ship.getPosition()[0] - 1][ship.getPosition()[1] + i - 1] = 1;
+			}
+			
+			if(ship.getPosition()[0] + 1 <= 15)
+				field[ship.getPosition()[0] + 1][ship.getPosition()[1] + i] = 1;
+			
+			if(ship.getPosition()[0] - 1 >= 0)
+				field[ship.getPosition()[0] - 1][ship.getPosition()[1] + i] = 1;
+			
+			if(i == ship.getCountOfCells() - 1 && ship.getPosition()[1] + i <= 15) {
+				field[ship.getPosition()[0]][ship.getPosition()[1] + i + 1] = 1;
+				
+				if(ship.getPosition()[0] + 1 <= 15)
+					field[ship.getPosition()[0] + 1][ship.getPosition()[1] + i + 1] = 1;
+				
+				if(ship.getPosition()[0] - 1 >= 0)
+					field[ship.getPosition()[0] - 1][ship.getPosition()[1] + i + 1] = 1;
+			}
+			
 		}
 		
 		return field;
