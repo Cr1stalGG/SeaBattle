@@ -2,6 +2,8 @@ package by.seabattle.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,13 +16,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @EqualsAndHashCode
-@NoArgsConstructor
 @AllArgsConstructor
 public class Match implements Serializable{
-	@Builder.Default
-	private Field[] fields = new Field[2];
-	@Builder.Default
-	private Player[] players = new Player[2];
-	@Builder.Default
-	private Date dateOfStart = new Date();
+	private Map<Player, Field[]> match;
+	
+	public Match() {
+		this.match = new HashMap<Player, Field[]>();
+	}
 }

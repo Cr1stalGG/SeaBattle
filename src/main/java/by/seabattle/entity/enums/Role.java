@@ -1,6 +1,9 @@
 package by.seabattle.entity.enums;
 
-public enum Role {
+import java.io.Serializable;
+
+public enum Role implements Serializable{
 	ROLE_USER,
-	RPLE_ADMIN
+	ROLE_ADMIN,
+	ROLE_BOT
 }
