@@ -1,8 +1,5 @@
 package by.seabattle.service;
 
-import java.lang.management.GarbageCollectorMXBean;
-import java.util.Iterator;
-
 import by.seabattle.entity.Field;
 import by.seabattle.entity.Ship;
 import by.seabattle.utils.Randomizer;
@@ -87,7 +84,7 @@ public class FieldService {
 		return field;
 	}
 	
-	private static int[][] verticalArrange(int[][] field, Ship ship) {
+	public static int[][] verticalArrange(int[][] field, Ship ship) {
 		for(int i = 0; i < ship.getCountOfCells(); ++i) {
 			field[ship.getPosition()[0] + i][ship.getPosition()[1]] = 2;
 			
@@ -120,7 +117,7 @@ public class FieldService {
 		return field;
 	}
 	
-	private static int[][] horizontalArrange(int[][] field, Ship ship) {
+	public static int[][] horizontalArrange(int[][] field, Ship ship) {
 		for(int i = 0; i < ship.getCountOfCells(); ++i) {
 			field[ship.getPosition()[0]][ship.getPosition()[1] + i] = 2;	
 			
@@ -155,7 +152,7 @@ public class FieldService {
 		return field;
 	}
 	
-	private static boolean isCorrectPos(Ship ship, int[][] field) {
+	public static boolean isCorrectPos(Ship ship, int[][] field) {
 		boolean firstTry = ship.isVertical() && ship.getPosition()[0] + ship.getCountOfCells() <= 15 ||
 				   	       !ship.isVertical() && ship.getPosition()[1] + ship.getCountOfCells() <= 15;
 		

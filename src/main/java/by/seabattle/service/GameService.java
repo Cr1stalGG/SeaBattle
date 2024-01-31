@@ -29,12 +29,14 @@ public class GameService {
 		
 		int game_mode = -1;
 		
-		do {
+		while(!(game_mode == 1 || game_mode == 2)) {
 			game_mode = scanner.nextInt();
 			
-			if(game_mode != 1 || game_mode != 2)
+			if(!(game_mode == 1 || game_mode == 2)) {
 				System.out.println("$Incorrect input data!");
-		} while(game_mode != 1 || game_mode != 2);
+				System.out.println(GAME_MODE_UI);
+			}
+		}
 		
 		switch (game_mode) {
 			case 1: 
@@ -52,10 +54,17 @@ public class GameService {
 	}
 	
 	private void singleplayer(Player player) {
-		Player bot = new Player("Bot", Role.ROLE_USER);
+		Player bot = new Player("Bot", Role.ROLE_BOT);
 		
 		Match match = MatchService.getConfiguredMatch(player, bot);
 		
+		FieldService.showFields(match.getMatch().get(player)[0], match.getMatch().get(player)[1]);
+		
+		try {
+			Serializer.serialize(match);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private void multiplayer(Player mainPlayer) {
